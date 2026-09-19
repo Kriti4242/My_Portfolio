@@ -1,0 +1,1 @@
+import{t as e}from"./jsx-runtime-cvnAX2Ol.js";var t=e();function n({id:e,children:n,className:r=``}){return(0,t.jsx)(`section`,{id:e,className:`section-padding relative ${r}`,children:(0,t.jsx)(`div`,{className:`mx-auto max-w-7xl`,children:n})})}export{n as t};
