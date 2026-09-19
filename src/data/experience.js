@@ -1,0 +1,57 @@
+export const experiences = [
+  {
+    id: 'dreamy-products',
+    type: 'Professional',
+    title: 'Freelance Frontend Developer',
+    organization: 'Dreamy Products',
+    period: 'May 2026 – June 2026',
+    location: 'Freelance',
+    highlights: [
+      'Built B2B ordering platform for stationery manufacturer.',
+      'Implemented reusable React components using Context API for global state.',
+      'Developed multi-page ordering flow with salesmen and bulk order features.',
+      'Created shopkeeper catalogs and shop-specific features.',
+    ],
+  },
+  {
+    id: 'mannatron-tech',
+    type: 'Internship',
+    title: 'Software Developer Intern',
+    organization: 'Mannatron Tech Pvt. Ltd.',
+    period: 'Jan 2026 – May 2026',
+    location: 'Hyderabad',
+    highlights: [
+      'Developed web applications using React.js and Node.js.',
+      'Worked on backend APIs and database integration.',
+      'Collaborated with senior developers on feature implementation.',
+    ],
+  },
+  {
+    id: 'drdo',
+    type: 'Internship',
+    title: 'Frontend Intern',
+    organization: 'DRDO – Institute for Systems Studies & Analyses',
+    period: 'June 2025 – Aug 2025',
+    location: 'New Delhi',
+    highlights: [
+      'Worked on frontend development for defense research projects.',
+      'Gained experience in enterprise software development.',
+      'Collaborated with research scientists on UI implementation.',
+    ],
+  },
+  {
+    id: 'hmr-itm',
+    type: 'Education',
+    title: 'B.Tech in Information Technology',
+    organization: 'HMR Institute of Technology and Management',
+    period: '2022–2026',
+    location: 'Delhi',
+    highlights: [
+      'CGPA: 8.71/10',
+      'Core Member, Innovation Cell HMRITM',
+      'Founded and led Fusion Verse',
+      'Volunteer ICAMC 2023',
+      'DAAK INDIA Project Contributor',
+    ],
+  },
+];
