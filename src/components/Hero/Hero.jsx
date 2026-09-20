@@ -157,7 +157,7 @@ export default function Hero() {
                 <img
                   src={heroContent.profileImage}
                   alt="Kriti portrait"
-                  className="h-[400px] w-full object-contain rounded-2xl shadow-2xl"
+                  className="h-[360px] w-full object-cover object-top rounded-2xl shadow-2xl sm:h-[400px]"
                   loading="eager"
                 />
 
