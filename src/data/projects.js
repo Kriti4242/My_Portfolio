@@ -110,7 +110,7 @@ export const projects = [
       'Automated delivery notifications',
     ],
     github: 'https://github.com/Kriti4242/SupplyMove',
-    liveDemo: '',
+    liveDemo: 'https://supply-move.vercel.app/',
     category: 'Logistics',
   },
 
