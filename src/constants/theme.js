@@ -13,9 +13,9 @@ export const colors = {
 };
 
 export const siteMeta = {
-  title: 'Kriti — Full Stack Developer',
-  description: 'Full-Stack Developer portfolio featuring React.js, Node.js, MongoDB projects including StudyBuddy, Fake Job Detector, and Dreamy Products.',
+  title: 'Kriti Verma | Full-Stack Developer',
+  description: 'Kriti Verma is a Full-Stack Developer specializing in React, Node.js, MongoDB, and modern web development. View her portfolio of production web applications.',
   url: 'https://kriti-portfolio.vercel.app',
-  author: 'Kriti',
-  keywords: 'Kriti, Full Stack Developer, React Developer, Node.js, MongoDB, Portfolio, Web Developer',
+  author: 'Kriti Verma',
+  keywords: 'Kriti Verma, Full Stack Developer, React Developer, Node.js, MongoDB, Portfolio, Web Developer, MERN Stack',
 };

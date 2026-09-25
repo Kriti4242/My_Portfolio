@@ -1,49 +1,31 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, lazy, Suspense } from 'react';
 import { motion } from 'framer-motion';
-import { Globe, Code, Database, Box, ChevronDown } from 'lucide-react';
+import { ChevronDown, Download } from 'lucide-react';
 import { heroContent } from '@/data/hero';
 import { socialLinks } from '@/data/social';
 import Button from '@/components/common/Button/Button';
-import Hero3D from '@/components/Hero/Hero3D';
 import { GithubIcon, LinkedinIcon, MailIcon } from '@/components/common/SocialIcons';
 import { useTypewriter } from '@/hooks/useTypewriter';
 
+const DeveloperWorld = lazy(() => import('@/components/ThreeD/DeveloperWorld'));
+
 const roles = [
-  'Kriti',
-  'React Developer',
-  'Frontend Developer',
-  'Backend Developer',
+  'Full-Stack Developer',
+  'React Engineer',
+  'Node.js Developer',
   'Web Developer',
-  'Data Analyst'
+];
+
+const techPills = [
+  { name: 'React.js',   color: '#61DAFB' },
+  { name: 'Node.js',    color: '#339933' },
+  { name: 'MongoDB',    color: '#47A248' },
+  { name: 'Express.js', color: '#7c3aed' },
 ];
 
 export default function Hero() {
   const [mounted, setMounted] = useState(false);
-
   const { text: typedText } = useTypewriter(roles);
-
-  const techCards = [
-    {
-      name: 'React.js',
-      icon: Globe,
-      color: '#61DAFB',
-    },
-    {
-      name: 'Node.js',
-      icon: Code,
-      color: '#339933',
-    },
-    {
-      name: 'SQL',
-      icon: Database,
-      color: '#00758F',
-    },
-    {
-      name: 'Docker',
-      icon: Box,
-      color: '#2496ED',
-    },
-  ];
 
   useEffect(() => {
     setMounted(true);
@@ -53,155 +35,165 @@ export default function Hero() {
     <section
       id="home"
       className="relative min-h-screen overflow-hidden"
+      aria-label="Hero — Kriti, Full-Stack Developer"
     >
-      <Hero3D />
+      {/* 3D Developer World — fixed layer shared across all sections */}
+      <Suspense fallback={
+        <div className="fixed inset-0 -z-10 bg-gradient-to-br from-primary/10 via-transparent to-secondary/10" />
+      }>
+        <DeveloperWorld />
+      </Suspense>
 
+      {/* Gradient overlays for text readability */}
+      <div className="absolute inset-0 -z-10 bg-gradient-to-r from-background/80 via-background/50 to-transparent pointer-events-none" />
+      <div className="absolute inset-0 -z-10 bg-gradient-to-t from-background via-transparent to-transparent pointer-events-none" />
+
+      {/* Ambient glow blobs — subdued so they don't blow out light mode */}
+      <div className="pointer-events-none absolute -left-40 top-20 h-96 w-96 rounded-full bg-primary/10 blur-[110px]" />
+      <div className="pointer-events-none absolute -right-40 bottom-20 h-80 w-80 rounded-full bg-secondary/10 blur-[110px]" />
+
+      {/* Hero Content */}
       <div className="relative z-10 mx-auto flex min-h-screen max-w-7xl flex-col items-center justify-center px-4 py-20 sm:px-6 lg:px-8">
-        <div className="flex w-full flex-col items-center justify-center gap-8 lg:flex-row lg:gap-16">
-          <motion.div
-            initial={{ opacity: 0, x: -50 }}
-            animate={{ opacity: mounted ? 1 : 0, x: mounted ? 0 : -50 }}
-            transition={{ duration: 0.8 }}
-            className="order-2 w-full lg:w-1/2 lg:text-left"
-          >
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: mounted ? 1 : 0, y: mounted ? 0 : 20 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-sm"
-            >
-              <div className="h-2 w-2 rounded-full bg-primary animate-pulse" />
-              <span className="text-text">Full-Stack Developer</span>
-            </motion.div>
+        <div className="flex w-full flex-col items-start justify-center gap-7 lg:max-w-[58%]">
 
-            <motion.h1
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: mounted ? 1 : 0, y: mounted ? 0 : 20 }}
-              transition={{ duration: 0.6, delay: 0.3 }}
-              className="mt-6 font-display text-5xl font-bold tracking-tight sm:text-6xl lg:text-7xl"
-            >
-              Hi, I'm{' '}
-              <span className="bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent inline-block min-w-[300px] sm:min-w-[400px]">
-                {typedText}
-                <span className="inline-block w-0.5 h-6 ml-1 animate-pulse" style={{
-                  background: 'linear-gradient(to bottom, #7c3aed, #06b6d4)'
-                }} />
+          {/* ── Status badge ─────────────────────────────────────────────── */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: mounted ? 1 : 0, y: mounted ? 0 : 20 }}
+            transition={{ duration: 0.6, delay: 0.15 }}
+            className="hero-badge"
+          >
+            <span className="relative flex h-2 w-2">
+              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75" />
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-primary" />
+            </span>
+            <span>Available for opportunities</span>
+          </motion.div>
+
+          {/* ── Name + Typewriter ─────────────────────────────────────────── */}
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: mounted ? 1 : 0, y: mounted ? 0 : 24 }}
+            transition={{ duration: 0.7, delay: 0.25 }}
+          >
+            <p className="text-lg font-medium text-muted">Hi, I'm</p>
+            <h1 className="font-display tracking-tight">
+              {/* "Kriti" — uses hero-name: white gradient (dark) / deep indigo gradient (light) */}
+              <span className="hero-name text-6xl font-bold sm:text-7xl lg:text-8xl">
+                Kriti
               </span>
-            </motion.h1>
-
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: mounted ? 1 : 0, y: mounted ? 0 : 20 }}
-              transition={{ duration: 0.6, delay: 0.5 }}
-              className="mt-6 max-w-xl text-lg"
-            >
-              I build complete, scalable web applications from frontend to backend.
-              Specializing in React, Node.js, and modern development workflows.
-              I turn complex problems into elegant, performant solutions.
-            </motion.p>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: mounted ? 1 : 0, y: mounted ? 0 : 20 }}
-              transition={{ duration: 0.6, delay: 0.5 }}
-              className="mt-8 flex flex-wrap gap-4"
-            >
-              <Button href="#projects" magnetic>
-                View My Work
-              </Button>
-              <Button variant="secondary" href="#contact" magnetic>
-                Contact Me
-              </Button>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: mounted ? 1 : 0, y: mounted ? 0 : 20 }}
-              transition={{ duration: 0.6, delay: 0.6 }}
-              className="mt-8 flex items-center gap-3"
-            >
-              {socialLinks.map(({ id, href, label }) => {
-                const iconMap = {
-                  github: <GithubIcon className="h-5 w-5" />,
-                  linkedin: <LinkedinIcon className="h-5 w-5" />,
-                  email: <MailIcon className="h-5 w-5" />
-                };
-                return (
-                  <a
-                    key={id}
-                    href={href}
-                    target="_blank"
-                    rel="noreferrer"
-                    aria-label={label}
-                    className="flex h-11 w-11 items-center justify-center rounded-full border border-white/10 bg-white/5 text-text transition hover:border-primary/50 hover:text-primary hover:shadow-[0_0_20px_rgba(124,58,237,0.3)] hover:shadow-primary/20"
-                    title={label}
-                  >
-                    {iconMap[id] || <MailIcon className="h-5 w-5" />}
-                  </a>
-                );
-              })}
-            </motion.div>
+              {/* Typewriter roles — uses hero-role: purple→cyan (dark) / violet→blue (light) */}
+              <span
+                className="hero-role mt-1 block min-h-[1.25em] text-4xl font-bold sm:text-5xl lg:text-6xl"
+                aria-live="polite"
+                aria-label={`Current role: ${typedText}`}
+              >
+                {typedText}
+                {/* Cursor — animated, theme-aware via hero-cursor class */}
+                <span className="hero-cursor" aria-hidden="true" />
+              </span>
+            </h1>
           </motion.div>
 
+          {/* ── Description ──────────────────────────────────────────────── */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: mounted ? 1 : 0, scale: mounted ? 1 : 0.9 }}
-            transition={{ duration: 0.8, delay: 0.2 }}
-            className="order-1 relative flex w-full lg:w-1/2 items-center justify-center"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: mounted ? 1 : 0, y: mounted ? 0 : 20 }}
+            transition={{ duration: 0.6, delay: 0.4 }}
+            className="max-w-lg space-y-1.5"
           >
-            <div className="absolute -inset-4 rounded-full bg-gradient-to-br from-primary/30 via-transparent to-secondary/20 blur-2xl" />
-            <div className="absolute -inset-12 rounded-full bg-gradient-to-br from-primary/20 via-transparent to-secondary/10 blur-3xl" />
-
-            <div className="relative w-full max-w-md">
-              <div className="relative">
-                <img
-                  src={heroContent.profileImage}
-                  alt="Kriti portrait"
-                  className="h-[360px] w-full object-cover object-top rounded-2xl shadow-2xl sm:h-[400px]"
-                  loading="eager"
-                />
-
-                <div className="absolute -left-4 top-8 hidden md:block">
-                  {techCards.slice(0, 2).map((tech, i) => (
-                    <motion.div
-                      key={tech.name}
-                      initial={{ opacity: 0, x: -20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 1 + i * 0.1 }}
-                      className="glass-card mb-2 flex items-center gap-2 rounded-full px-3 py-2"
-                    >
-                      <tech.icon className="h-4 w-4" style={{ color: tech.color }} />
-                      <span className="text-xs text-text">{tech.name}</span>
-                    </motion.div>
-                  ))}
-                </div>
-
-                <div className="absolute -right-4 bottom-12 hidden md:block">
-                  {techCards.slice(2).map((tech, i) => (
-                    <motion.div
-                      key={tech.name}
-                      initial={{ opacity: 0, x: 20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 1.3 + i * 0.1 }}
-                      className="glass-card mb-2 flex items-center gap-2 rounded-full px-3 py-2"
-                    >
-                      <tech.icon className="h-4 w-4" style={{ color: tech.color }} />
-                      <span className="text-xs text-text">{tech.name}</span>
-                    </motion.div>
-                  ))}
-                </div>
-              </div>
-            </div>
+            <p className="text-base leading-relaxed text-text/85 sm:text-lg">
+              I build modern, scalable web applications with React, Node.js and MongoDB.
+            </p>
+            <p className="text-sm leading-relaxed text-muted">
+              I enjoy turning ideas into responsive, user-focused digital products.
+            </p>
           </motion.div>
+
+          {/* ── Tech pills ───────────────────────────────────────────────── */}
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: mounted ? 1 : 0, y: mounted ? 0 : 16 }}
+            transition={{ duration: 0.5, delay: 0.5 }}
+            className="flex flex-wrap gap-2"
+          >
+            {techPills.map((t) => (
+              <span key={t.name} className="tech-pill">
+                <span
+                  className="h-1.5 w-1.5 rounded-full flex-shrink-0"
+                  style={{ backgroundColor: t.color }}
+                />
+                {t.name}
+              </span>
+            ))}
+          </motion.div>
+
+          {/* ── CTAs ─────────────────────────────────────────────────────── */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: mounted ? 1 : 0, y: mounted ? 0 : 20 }}
+            transition={{ duration: 0.6, delay: 0.55 }}
+            className="flex flex-wrap gap-3"
+          >
+            <Button href="#projects" magnetic>
+              View My Work
+            </Button>
+            <a
+              href={heroContent.resumeUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center justify-center gap-2 rounded-full border border-secondary/40 bg-secondary/10 px-6 py-3 text-sm font-semibold text-secondary backdrop-blur-sm transition-all duration-300 hover:bg-secondary/20 hover:border-secondary/60 hover:shadow-[0_0_24px_rgba(0,229,255,0.25)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-secondary"
+              aria-label="View Resume — opens Google Drive"
+            >
+              <Download className="h-4 w-4" />
+              Resume
+            </a>
+            <Button variant="secondary" href="#contact">
+              Contact Me
+            </Button>
+          </motion.div>
+
+          {/* ── Social links ─────────────────────────────────────────────── */}
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: mounted ? 1 : 0, y: mounted ? 0 : 16 }}
+            transition={{ duration: 0.5, delay: 0.65 }}
+            className="flex items-center gap-3"
+          >
+            {socialLinks.map(({ id, href, label }) => {
+              const iconMap = {
+                github:   <GithubIcon className="h-5 w-5" />,
+                linkedin: <LinkedinIcon className="h-5 w-5" />,
+                email:    <MailIcon className="h-5 w-5" />,
+              };
+              return (
+                <a
+                  key={id}
+                  href={href}
+                  target={id !== 'email' ? '_blank' : undefined}
+                  rel={id !== 'email' ? 'noopener noreferrer' : undefined}
+                  aria-label={label}
+                  className="social-btn"
+                  title={label}
+                >
+                  {iconMap[id] ?? <MailIcon className="h-5 w-5" />}
+                </a>
+              );
+            })}
+            <span className="ml-2 h-px w-8 bg-muted/20" />
+            <span className="text-xs text-muted">Let's connect</span>
+          </motion.div>
+
         </div>
       </div>
 
+      {/* Scroll indicator */}
       <motion.a
         href="#about"
-        className="absolute bottom-8 left-1/2 flex -translate-x-1/2 flex-col items-center gap-2"
+        className="absolute bottom-8 left-1/2 z-10 flex -translate-x-1/2 flex-col items-center gap-2"
         animate={{ y: [0, 8, 0] }}
-        transition={{ repeat: Infinity, duration: 2 }}
-        aria-label="Scroll to about"
+        transition={{ repeat: Infinity, duration: 2.5, ease: 'easeInOut' }}
+        aria-label="Scroll to about section"
       >
         <span className="text-xs uppercase tracking-widest text-muted">Scroll</span>
         <ChevronDown className="h-5 w-5 text-muted" />

@@ -11,8 +11,10 @@ export const galleryItems = [
     id: 'g1',
     title: 'Kriti',
     category: 'personal',
-    src: img('k-img.jpg'),
-    aspect: 'tall',
+    // PRIVACY: uses pre-cropped derivative (head + shoulders only).
+    // The original k-img.jpg is NEVER referenced here.
+    src: img('kriti-gallery-crop.jpg'),
+    aspect: 'portrait',
   },
   {
     id: 'g2',

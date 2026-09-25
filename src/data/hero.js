@@ -11,7 +11,7 @@ export const heroContent = {
   ],
   description:
     "I'm a software developer crafting immersive, performant web experiences. Explore my journey, projects, and the modern stack I use to ship production-ready products.",
-  resumeUrl: '/resume.pdf',
+  resumeUrl: 'https://drive.google.com/file/d/1lNKIm12rCkTz1BG2DsvCe9vhqflE50jG/view?usp=sharing',
   profileImage: new URL('../assets/images/k-img.jpg', import.meta.url).href,
   logoImage: new URL('../assets/images/k-letter.jpeg', import.meta.url).href,
 };
