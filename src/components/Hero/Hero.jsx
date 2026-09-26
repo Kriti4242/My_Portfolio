@@ -1,5 +1,5 @@
-import { useState, useEffect, lazy, Suspense } from 'react';
-import { motion } from 'framer-motion';
+import { useEffect } from 'react';
+import { motion, useAnimation } from 'framer-motion';
 import { ChevronDown, Download } from 'lucide-react';
 import { heroContent } from '@/data/hero';
 import { socialLinks } from '@/data/social';
@@ -7,7 +7,8 @@ import Button from '@/components/common/Button/Button';
 import { GithubIcon, LinkedinIcon, MailIcon } from '@/components/common/SocialIcons';
 import { useTypewriter } from '@/hooks/useTypewriter';
 
-const DeveloperWorld = lazy(() => import('@/components/ThreeD/DeveloperWorld'));
+// DeveloperWorld is now mounted once at the HomePage level — not here.
+
 
 const roles = [
   'Full-Stack Developer',
@@ -23,13 +24,46 @@ const techPills = [
   { name: 'Express.js', color: '#7c3aed' },
 ];
 
-export default function Hero() {
-  const [mounted, setMounted] = useState(false);
+// ---------------------------------------------------------------------------
+// Spring presets
+// ---------------------------------------------------------------------------
+const springBase = {
+  type: 'spring',
+  stiffness: 200,
+  damping: 20,
+};
+
+const springBouncy = {
+  type: 'spring',
+  stiffness: 150,
+  damping: 15,
+};
+
+/** Returns a spring-drop variant object with the given delay */
+function dropVariant(delay, spring = springBase) {
+  return {
+    hidden: { opacity: 0, y: -60, rotateX: -15 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      rotateX: 0,
+      transition: { ...spring, delay },
+    },
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Hero
+// ---------------------------------------------------------------------------
+export default function Hero({ animationReady = false }) {
+  const controls = useAnimation();
   const { text: typedText } = useTypewriter(roles);
 
   useEffect(() => {
-    setMounted(true);
-  }, []);
+    if (animationReady) {
+      controls.start('visible');
+    }
+  }, [animationReady, controls]);
 
   return (
     <section
@@ -37,13 +71,6 @@ export default function Hero() {
       className="relative min-h-screen overflow-hidden"
       aria-label="Hero — Kriti, Full-Stack Developer"
     >
-      {/* 3D Developer World — fixed layer shared across all sections */}
-      <Suspense fallback={
-        <div className="fixed inset-0 -z-10 bg-gradient-to-br from-primary/10 via-transparent to-secondary/10" />
-      }>
-        <DeveloperWorld />
-      </Suspense>
-
       {/* Gradient overlays for text readability */}
       <div className="absolute inset-0 -z-10 bg-gradient-to-r from-background/80 via-background/50 to-transparent pointer-events-none" />
       <div className="absolute inset-0 -z-10 bg-gradient-to-t from-background via-transparent to-transparent pointer-events-none" />
@@ -53,14 +80,17 @@ export default function Hero() {
       <div className="pointer-events-none absolute -right-40 bottom-20 h-80 w-80 rounded-full bg-secondary/10 blur-[110px]" />
 
       {/* Hero Content */}
-      <div className="relative z-10 mx-auto flex min-h-screen max-w-7xl flex-col items-center justify-center px-4 py-20 sm:px-6 lg:px-8">
+      <div
+        className="relative z-10 mx-auto flex min-h-screen max-w-7xl flex-col items-center justify-center px-4 py-20 sm:px-6 lg:px-8"
+        style={{ perspective: '1000px' }}
+      >
         <div className="flex w-full flex-col items-start justify-center gap-7 lg:max-w-[58%]">
 
-          {/* ── Status badge ─────────────────────────────────────────────── */}
+          {/* ── Status badge — delay 0.2s ─────────────────────────────────── */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: mounted ? 1 : 0, y: mounted ? 0 : 20 }}
-            transition={{ duration: 0.6, delay: 0.15 }}
+            variants={dropVariant(0.2)}
+            initial="hidden"
+            animate={controls}
             className="hero-badge"
           >
             <span className="relative flex h-2 w-2">
@@ -70,36 +100,53 @@ export default function Hero() {
             <span>Available for opportunities</span>
           </motion.div>
 
-          {/* ── Name + Typewriter ─────────────────────────────────────────── */}
-          <motion.div
-            initial={{ opacity: 0, y: 24 }}
-            animate={{ opacity: mounted ? 1 : 0, y: mounted ? 0 : 24 }}
-            transition={{ duration: 0.7, delay: 0.25 }}
+          {/* ── "Hi, I'm" — delay 0.45s ───────────────────────────────────── */}
+          <motion.p
+            variants={dropVariant(0.45)}
+            initial="hidden"
+            animate={controls}
+            className="text-lg font-medium text-muted"
           >
-            <p className="text-lg font-medium text-muted">Hi, I'm</p>
-            <h1 className="font-display tracking-tight">
-              {/* "Kriti" — uses hero-name: white gradient (dark) / deep indigo gradient (light) */}
-              <span className="hero-name text-6xl font-bold sm:text-7xl lg:text-8xl">
-                Kriti
-              </span>
-              {/* Typewriter roles — uses hero-role: purple→cyan (dark) / violet→blue (light) */}
-              <span
-                className="hero-role mt-1 block min-h-[1.25em] text-4xl font-bold sm:text-5xl lg:text-6xl"
-                aria-live="polite"
-                aria-label={`Current role: ${typedText}`}
-              >
-                {typedText}
-                {/* Cursor — animated, theme-aware via hero-cursor class */}
-                <span className="hero-cursor" aria-hidden="true" />
-              </span>
-            </h1>
+            Hi, I'm
+          </motion.p>
+
+          {/* ── "Kriti" h1 — delay 0.7s (extra bounce) ───────────────────── */}
+          <motion.h1
+            variants={dropVariant(0.7, springBouncy)}
+            initial="hidden"
+            animate={controls}
+            className="font-display tracking-tight -mt-4"
+          >
+            {/* "Kriti" — uses hero-name: white gradient (dark) / deep indigo gradient (light) */}
+            <span className="hero-name text-6xl font-bold sm:text-7xl lg:text-8xl">
+              Kriti
+            </span>
+          </motion.h1>
+
+          {/* ── Typewriter role — delay 0.9s ──────────────────────────────── */}
+          <motion.div
+            variants={dropVariant(0.9)}
+            initial="hidden"
+            animate={controls}
+            className="-mt-4"
+          >
+            {/* Typewriter roles — uses hero-role: purple→cyan (dark) / violet→blue (light) */}
+            <span
+              className="hero-role mt-1 block min-h-[1.25em] text-4xl font-bold sm:text-5xl lg:text-6xl"
+              aria-live="polite"
+              aria-label={`Current role: ${typedText}`}
+            >
+              {typedText}
+              {/* Cursor — animated, theme-aware via hero-cursor class */}
+              <span className="hero-cursor" aria-hidden="true" />
+            </span>
           </motion.div>
 
-          {/* ── Description ──────────────────────────────────────────────── */}
+          {/* ── Description — delay 1.1s ──────────────────────────────────── */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: mounted ? 1 : 0, y: mounted ? 0 : 20 }}
-            transition={{ duration: 0.6, delay: 0.4 }}
+            variants={dropVariant(1.1)}
+            initial="hidden"
+            animate={controls}
             className="max-w-lg space-y-1.5"
           >
             <p className="text-base leading-relaxed text-text/85 sm:text-lg">
@@ -110,11 +157,11 @@ export default function Hero() {
             </p>
           </motion.div>
 
-          {/* ── Tech pills ───────────────────────────────────────────────── */}
+          {/* ── Tech pills — delay 1.1s (alongside description) ──────────── */}
           <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: mounted ? 1 : 0, y: mounted ? 0 : 16 }}
-            transition={{ duration: 0.5, delay: 0.5 }}
+            variants={dropVariant(1.1)}
+            initial="hidden"
+            animate={controls}
             className="flex flex-wrap gap-2"
           >
             {techPills.map((t) => (
@@ -128,11 +175,11 @@ export default function Hero() {
             ))}
           </motion.div>
 
-          {/* ── CTAs ─────────────────────────────────────────────────────── */}
+          {/* ── CTAs — delay 1.35s ────────────────────────────────────────── */}
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: mounted ? 1 : 0, y: mounted ? 0 : 20 }}
-            transition={{ duration: 0.6, delay: 0.55 }}
+            variants={dropVariant(1.35)}
+            initial="hidden"
+            animate={controls}
             className="flex flex-wrap gap-3"
           >
             <Button href="#projects" magnetic>
@@ -153,11 +200,11 @@ export default function Hero() {
             </Button>
           </motion.div>
 
-          {/* ── Social links ─────────────────────────────────────────────── */}
+          {/* ── Social icons — delay 1.55s ────────────────────────────────── */}
           <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: mounted ? 1 : 0, y: mounted ? 0 : 16 }}
-            transition={{ duration: 0.5, delay: 0.65 }}
+            variants={dropVariant(1.55)}
+            initial="hidden"
+            animate={controls}
             className="flex items-center gap-3"
           >
             {socialLinks.map(({ id, href, label }) => {

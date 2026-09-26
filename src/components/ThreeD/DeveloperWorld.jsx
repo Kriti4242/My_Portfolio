@@ -1,22 +1,25 @@
 /**
  * DeveloperWorld — top-level 3D experience canvas.
  *
- * This replaces DeveloperWorkspace as the primary 3D layer rendered in Hero.
- * It spans the full viewport and sits behind all page content.
+ * Fixed behind all page content (-z-10). Exposes `navigateToZone`
+ * via custom DOM event so Navbar can trigger camera zone jumps.
  *
- * Exposes `navigateToZone` via a stable event so Navbar can trigger camera jumps.
+ * v2: passes `isMobile` and `isLight` to the scene for adaptive rendering.
  */
 
 import { Suspense, useEffect, useState } from 'react';
 import { Canvas } from '@react-three/fiber';
 import DeveloperWorldScene from './DeveloperWorldScene';
 import { useWorldCamera } from '@/hooks/useWorldCamera';
-import { projects }      from '@/data/projects';
-import { experiences }   from '@/data/experience';
-import { galleryItems }  from '@/data/gallery';
+import { projects }     from '@/data/projects';
+import { experiences }  from '@/data/experience';
+import { galleryItems } from '@/data/gallery';
 
-const isMobile = () =>
+const isMobileCheck = () =>
   typeof window !== 'undefined' && window.innerWidth < 768;
+
+const isLightCheck = () =>
+  typeof document !== 'undefined' && document.documentElement.classList.contains('light');
 
 function WebGLFallback() {
   return (
@@ -26,22 +29,32 @@ function WebGLFallback() {
 
 export default function DeveloperWorld() {
   const [webGLOk, setWebGLOk] = useState(true);
-  const [mobile, setMobile] = useState(false);
+  const [mobile,  setMobile]  = useState(false);
+  const [light,   setLight]   = useState(false);
   const { cameraTargetRef, navigateToZone } = useWorldCamera();
 
-  // WebGL check
+  // WebGL capability check
   useEffect(() => {
     try {
       const c = document.createElement('canvas');
       const ctx = c.getContext('webgl') || c.getContext('experimental-webgl');
       if (!ctx) setWebGLOk(false);
-    } catch {
-      setWebGLOk(false);
-    }
-    setMobile(isMobile());
+    } catch { setWebGLOk(false); }
+
+    setMobile(isMobileCheck());
+    setLight(isLightCheck());
   }, []);
 
-  // Expose navigateToZone via custom DOM event so Navbar can call it
+  // Listen for theme changes (class toggle on <html>)
+  useEffect(() => {
+    const observer = new MutationObserver(() => {
+      setLight(isLightCheck());
+    });
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ['class'] });
+    return () => observer.disconnect();
+  }, []);
+
+  // Expose navigateToZone via custom DOM event
   useEffect(() => {
     const handler = (e) => navigateToZone(e.detail?.zoneId);
     window.addEventListener('world:navigate', handler);
@@ -71,6 +84,8 @@ export default function DeveloperWorld() {
             projects={projects}
             experiences={experiences}
             galleryItems={galleryItems}
+            isMobile={mobile}
+            isLight={light}
           />
         </Suspense>
       </Canvas>
