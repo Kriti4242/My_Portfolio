@@ -26,6 +26,30 @@
     --color-text:       #0f172a;
   }
 
+  /* ── NO HORIZONTAL SCROLL — root containment ───────────────────────────── */
+  html,
+  body {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  #root {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+    box-sizing: border-box;
+    position: relative; /* so absolute children are clipped */
+  }
+
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
   html {
     scroll-behavior: auto;
   }
@@ -38,9 +62,23 @@
     transition: background-color 0.3s, color 0.3s;
   }
 
-  /* ── HEADING CONTRAST: dark & light explicit ──────────────────────────── */
+  /* ── HEADING CONTRAST + text overflow prevention ───────────────────────── */
   h1, h2, h3, h4, h5, h6 {
     color: var(--color-text);
+    overflow-wrap: break-word;
+    word-break: normal;
+    max-width: 100%;
+  }
+
+  /* ── IMAGES: always responsive ──────────────────────────────────────────── */
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  /* ── Paragraph text: prevent overflow ──────────────────────────────────── */
+  p, li, span, a {
+    overflow-wrap: break-word;
   }
 
   /* ── INPUT / TEXTAREA ─────────────────────────────────────────────────── */
@@ -440,6 +478,96 @@
     .hero-cursor {
       animation: none !important;
       opacity: 1;
+    }
+  }
+
+  /* ── MOBILE: Custom cursor disabled on touch ────────────────────────── */
+  @media (hover: none), (pointer: coarse) {
+    .custom-cursor, [data-cursor] {
+      display: none !important;
+    }
+  }
+
+  /* ── MOBILE: Section overflow containment ───────────────────────────── */
+  /*   Every section clips its decorative absolute children             */
+  section, main, header, footer, [data-section] {
+    max-width: 100%;
+    box-sizing: border-box;
+  }
+
+  /* ── MOBILE: Hero text scaling ──────────────────────────────────────── */
+  @media (max-width: 639px) {
+    /* hero-name: scale down for small screens */
+    .hero-name {
+      font-size: clamp(2.5rem, 13vw, 3.75rem);
+    }
+    /* hero-role typewriter */
+    .hero-role {
+      font-size: clamp(1.5rem, 9vw, 2.25rem) !important;
+      min-width: 0 !important;
+      max-width: 100%;
+      overflow-wrap: anywhere;
+    }
+    /* hero badge should not be too wide */
+    .hero-badge {
+      font-size: 0.75rem;
+      padding: 0.25rem 0.75rem;
+      max-width: 100%;
+    }
+    /* tech pills wrap tightly */
+    .tech-pill {
+      font-size: 0.7rem;
+      padding: 0.2rem 0.55rem;
+    }
+    /* section heading squeeze */
+    .section-padding {
+      padding: 3.5rem 1rem;
+    }
+
+    .hero-actions {
+      width: 100%;
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .hero-actions > * {
+      width: 100%;
+      max-width: 320px;
+    }
+
+    .hero-actions > * > a,
+    .hero-actions > * > button {
+      width: 100%;
+    }
+
+    .hero-socials {
+      justify-content: center;
+      width: 100%;
+    }
+
+    .hero-socials .social-btn {
+      flex-shrink: 0;
+    }
+  }
+
+  /* ── MOBILE: Glow blob containment ─────────────────────────────────── */
+  @media (max-width: 767px) {
+    /* Clip decorative blobs that use large negative offsets */
+    .mobile-clip {
+      overflow: hidden;
+    }
+    /* glass-card: remove horizontal overflow in cards */
+    .glass-card {
+      max-width: 100%;
+      box-sizing: border-box;
+      word-break: normal;
+      overflow-wrap: break-word;
+    }
+    /* section inputs: full width, no overflow */
+    input, textarea, select {
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
     }
   }
 }

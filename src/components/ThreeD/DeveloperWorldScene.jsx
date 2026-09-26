@@ -564,7 +564,7 @@ function OrbitingSkillOrb({ color, orbit, speed, phase, size = 0.14 }) {
   );
 }
 
-function SkillsLab({ centerZ = -4 }) {
+function SkillsLab({ centerZ = -4, isMobile = false }) {
   const coreRef = useRef();
   useFrame(({ clock }) => {
     if (coreRef.current) coreRef.current.rotation.y = clock.getElapsedTime() * 0.15;
@@ -584,7 +584,7 @@ function SkillsLab({ centerZ = -4 }) {
       </Float>
 
       {/* Orbit rings */}
-      {[1.8, 2.4, 3.0].map((r, i) => (
+      {(isMobile ? [1.25, 1.7] : [1.8, 2.4, 3.0]).map((r, i) => (
         <mesh key={i} rotation={[Math.PI / 2 + i * 0.3, i * 0.4, 0]}>
           <torusGeometry args={[r, 0.008, 8, 80]} />
           <meshBasicMaterial color={['#7c3aed', '#00e5ff', '#38bdf8'][i]} transparent opacity={0.22} />
@@ -592,12 +592,12 @@ function SkillsLab({ centerZ = -4 }) {
       ))}
 
       {/* Tech orbs */}
-      {SKILL_ORBS.map((s, i) => (
+      {SKILL_ORBS.slice(0, isMobile ? 5 : SKILL_ORBS.length).map((s, i) => (
         <OrbitingSkillOrb key={i} {...s} />
       ))}
 
       {/* Core point light */}
-      <pointLight color="#7c3aed" intensity={1.8} distance={7} />
+      <pointLight color="#7c3aed" intensity={isMobile ? 1.2 : 1.8} distance={7} />
     </group>
   );
 }
@@ -832,20 +832,24 @@ export default function DeveloperWorldScene({
       />
 
       {/* Ambient colored particles */}
-      <AmbientParticles count={isMobile ? 90 : 200} spread={[24, 14, 32]} offsetZ={-8} />
+      <AmbientParticles
+        count={isMobile ? 90 : 200}
+        spread={isMobile ? [12, 8, 24] : [24, 14, 32]}
+        offsetZ={-8}
+      />
 
       {/* ─── HERO ZONE ─── */}
       {/* Central holographic core — the KRITI.DEV universe center */}
-      <HolographicCore position={[-3.5, 1.2, 1.5]} />
+      <HolographicCore position={isMobile ? [0, 1.4, 1.5] : [-3.5, 1.2, 1.5]} />
 
       {/* Developer desk */}
-      <DeveloperDesk position={[0.4, -1.2, 0]} isMobile={isMobile} />
+      <DeveloperDesk position={isMobile ? [0, -1.35, 0] : [0.4, -1.2, 0]} isMobile={isMobile} />
 
       {/* Tech connection network */}
       <HeroTechNetwork isMobile={isMobile} />
 
       {/* ─── SKILLS ZONE ─── */}
-      <SkillsLab centerZ={-4} />
+      <SkillsLab centerZ={-4} isMobile={isMobile} />
 
       {/* ─── PROJECT LAB ─── */}
       {projects.length > 0 && <ProjectLab projects={projects} />}

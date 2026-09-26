@@ -66,8 +66,9 @@ export default function DeveloperWorld() {
   const dpr = mobile ? [1, 1] : [1, Math.min(window.devicePixelRatio, 1.5)];
 
   return (
-    <div className="fixed inset-0 -z-10 pointer-events-none" aria-hidden="true">
+    <div className="fixed inset-0 -z-10 pointer-events-none overflow-hidden" aria-hidden="true">
       <Canvas
+        className="block h-full w-full"
         camera={{ position: [0, 1.5, 9], fov: 55 }}
         dpr={dpr}
         gl={{

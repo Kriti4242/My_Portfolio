@@ -94,8 +94,8 @@ export default function About() {
 
         {/* Left: Profile */}
         <motion.div
-          initial={{ opacity: 0, x: -30 }}
-          whileInView={{ opacity: 1, x: 0 }}
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.7 }}
           className="space-y-7"
@@ -147,7 +147,7 @@ export default function About() {
           </div>
 
           {/* Stats */}
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+          <div className="grid gap-3 sm:grid-cols-4">
             {aboutContent.stats.map((stat) => (
               <div key={stat.id} className="glass-card p-4 text-center">
                 <p className="font-display text-2xl font-bold text-gradient">

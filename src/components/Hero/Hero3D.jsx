@@ -55,8 +55,8 @@ function Scene() {
 
 export default function Hero3D() {
   return (
-    <div className="absolute inset-0 -z-10 opacity-80">
-      <Canvas camera={{ position: [0, 0, 8], fov: 50 }} dpr={[1, 1.5]}>
+    <div className="absolute inset-0 -z-10 overflow-hidden opacity-80">
+      <Canvas className="block h-full w-full" camera={{ position: [0, 0, 8], fov: 50 }} dpr={[1, 1.5]}>
         <Suspense fallback={null}>
           <Scene />
         </Suspense>

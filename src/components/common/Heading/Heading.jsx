@@ -5,7 +5,7 @@ export default function Heading({ eyebrow, title, subtitle, align = 'left', clas
     align === 'center' ? 'text-center items-center mx-auto' : 'text-left items-start';
 
   return (
-    <div className={`flex max-w-3xl flex-col gap-4 ${alignClass} ${className}`}>
+    <div className={`flex w-full min-w-0 max-w-3xl flex-col gap-4 ${alignClass} ${className}`}>
       {eyebrow && (
         <motion.span
           initial={{ opacity: 0, y: 12 }}

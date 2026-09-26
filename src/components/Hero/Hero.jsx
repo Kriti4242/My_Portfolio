@@ -84,7 +84,7 @@ export default function Hero({ animationReady = false }) {
         className="relative z-10 mx-auto flex min-h-screen max-w-7xl flex-col items-center justify-center px-4 py-20 sm:px-6 lg:px-8"
         style={{ perspective: '1000px' }}
       >
-        <div className="flex w-full flex-col items-start justify-center gap-7 lg:max-w-[58%]">
+        <div className="flex w-full min-w-0 flex-col items-start justify-center gap-5 sm:gap-7 lg:max-w-[58%]">
 
           {/* ── Status badge — delay 0.2s ─────────────────────────────────── */}
           <motion.div
@@ -180,7 +180,7 @@ export default function Hero({ animationReady = false }) {
             variants={dropVariant(1.35)}
             initial="hidden"
             animate={controls}
-            className="flex flex-wrap gap-3"
+            className="hero-actions flex flex-wrap gap-3"
           >
             <Button href="#projects" magnetic>
               View My Work
@@ -189,7 +189,7 @@ export default function Hero({ animationReady = false }) {
               href={heroContent.resumeUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex items-center justify-center gap-2 rounded-full border border-secondary/40 bg-secondary/10 px-6 py-3 text-sm font-semibold text-secondary backdrop-blur-sm transition-all duration-300 hover:bg-secondary/20 hover:border-secondary/60 hover:shadow-[0_0_24px_rgba(0,229,255,0.25)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-secondary"
+              className="inline-flex items-center justify-center gap-2 rounded-full border border-secondary/40 bg-secondary/10 px-5 py-3 text-sm font-semibold text-secondary backdrop-blur-sm transition-all duration-300 hover:bg-secondary/20 hover:border-secondary/60 hover:shadow-[0_0_24px_rgba(0,229,255,0.25)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-secondary"
               aria-label="View Resume — opens Google Drive"
             >
               <Download className="h-4 w-4" />
@@ -205,7 +205,7 @@ export default function Hero({ animationReady = false }) {
             variants={dropVariant(1.55)}
             initial="hidden"
             animate={controls}
-            className="flex items-center gap-3"
+            className="hero-socials flex flex-wrap items-center gap-3"
           >
             {socialLinks.map(({ id, href, label }) => {
               const iconMap = {
