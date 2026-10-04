@@ -24,7 +24,7 @@ export const ZONES = [
 // Map section id → zone index for scroll tracking
 const ZONE_ORDER = ZONES.map((z) => z.id);
 
-export function useWorldCamera() {
+export function useWorldCamera({ isMobile = false, reducedMotion = false } = {}) {
   // Shared mutable target that the R3F camera rig reads every frame
   const cameraTargetRef = useRef({
     position: [...ZONES[0].position],
@@ -46,8 +46,7 @@ export function useWorldCamera() {
 
   // ── Scroll → zone mapping ───────────────────────────────────────────────
   useEffect(() => {
-    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (prefersReduced) return;
+    if (reducedMotion) return;
 
     const onScroll = () => {
       const scrollY    = window.scrollY;
@@ -64,7 +63,7 @@ export function useWorldCamera() {
       const to   = ZONES[upper];
 
       // Lerp between zones
-      const lerp = (a, b, t) => a + (b - a) * t;
+      const lerp = (a, b, val) => a + (b - a) * val;
       cameraTargetRef.current.position = [
         lerp(from.position[0], to.position[0], t),
         lerp(from.position[1], to.position[1], t),
@@ -86,12 +85,14 @@ export function useWorldCamera() {
     window.addEventListener('scroll', onScroll, { passive: true });
     onScroll(); // run once on mount
     return () => window.removeEventListener('scroll', onScroll);
-  }, []);
+  }, [reducedMotion]);
 
-  // ── Mouse parallax ──────────────────────────────────────────────────────
+  // ── Mouse parallax (Desktop only) ──────────────────────────────────────
   useEffect(() => {
-    const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (prefersReduced) return;
+    if (isMobile || reducedMotion) {
+      cameraTargetRef.current.mouse = { x: 0, y: 0 };
+      return undefined;
+    }
 
     const onMouse = (e) => {
       cameraTargetRef.current.mouse = {
@@ -101,7 +102,7 @@ export function useWorldCamera() {
     };
     window.addEventListener('mousemove', onMouse, { passive: true });
     return () => window.removeEventListener('mousemove', onMouse);
-  }, []);
+  }, [isMobile, reducedMotion]);
 
   return { cameraTargetRef, navigateToZone, activeZoneRef };
 }
