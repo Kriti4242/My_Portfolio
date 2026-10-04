@@ -15,7 +15,7 @@ export default function Navbar({ theme, onToggleTheme }) {
   const [scrolled, setScrolled] = useState(false);
   const active = useActiveSection(navLinks.map((l) => l.id));
 
-  // Scroll detection for sticky header backdrop
+  // Scroll detection for sticky header styling
   useEffect(() => {
     const fn = () => setScrolled(window.scrollY > 20);
     fn();
@@ -23,10 +23,10 @@ export default function Navbar({ theme, onToggleTheme }) {
     return () => window.removeEventListener('scroll', fn);
   }, []);
 
-  // Close mobile menu on desktop resize
+  // Close mobile menu on desktop resize (>= 768px)
   useEffect(() => {
     const fn = () => {
-      if (window.innerWidth >= 1024) setOpen(false);
+      if (window.innerWidth >= 768) setOpen(false);
     };
     window.addEventListener('resize', fn);
     return () => window.removeEventListener('resize', fn);
@@ -62,14 +62,19 @@ export default function Navbar({ theme, onToggleTheme }) {
 
   return (
     <header
-      className={`fixed inset-x-0 top-0 z-50 transition-all duration-300 ${
-        scrolled || open
-          ? 'bg-background/95 backdrop-blur-xl border-b border-white/10 shadow-lg py-3 sm:py-3.5'
+      className={`fixed inset-x-0 top-0 z-50 transition-colors duration-300 ${
+        open
+          ? 'h-screen max-h-screen bg-background/98 backdrop-blur-3xl flex flex-col md:h-auto md:max-h-none md:bg-transparent md:backdrop-blur-none'
+          : scrolled
+          ? 'bg-background/90 backdrop-blur-xl border-b border-white/10 shadow-lg py-3 sm:py-3.5'
           : 'bg-transparent py-4 sm:py-5'
       }`}
     >
+      {/* Top Navbar Row */}
       <nav
-        className="mx-auto flex max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8"
+        className={`mx-auto flex w-full max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8 ${
+          open ? 'py-4 border-b border-white/10 md:border-b-0 md:py-0' : ''
+        }`}
         aria-label="Main navigation"
       >
         {/* Logo and developer title */}
@@ -87,8 +92,8 @@ export default function Navbar({ theme, onToggleTheme }) {
           </span>
         </a>
 
-        {/* Desktop navigation — hidden on mobile */}
-        <div className="hidden items-center gap-6 lg:flex">
+        {/* Desktop navigation — visible at >= 768px (md) */}
+        <div className="hidden items-center gap-6 md:flex">
           {navLinks.map((link) => (
             <a
               key={link.id}
@@ -127,12 +132,12 @@ export default function Navbar({ theme, onToggleTheme }) {
             className="rounded-full p-2.5 glass text-text transition hover:border-primary/50"
             aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
           >
-            {theme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
+            {theme === 'dark' ? <Sun className="h-4 w-4 text-amber-300" /> : <Moon className="h-4 w-4 text-indigo-500" />}
           </button>
         </div>
 
-        {/* Mobile top controls — Theme toggle + Hamburger */}
-        <div className="flex items-center gap-2.5 lg:hidden">
+        {/* Mobile controls (Theme Toggle + Hamburger) — visible at < 768px */}
+        <div className="flex items-center gap-2.5 md:hidden">
           <button
             type="button"
             onClick={onToggleTheme}
@@ -146,71 +151,69 @@ export default function Navbar({ theme, onToggleTheme }) {
             type="button"
             className={`rounded-xl p-2.5 transition-all active:scale-95 ${
               open
-                ? 'bg-primary/20 border border-primary/40 text-primary'
-                : 'glass text-text'
+                ? 'bg-primary/25 border border-primary/50 text-primary'
+                : 'glass text-text hover:border-primary/40'
             }`}
             onClick={() => setOpen((v) => !v)}
             aria-label={open ? 'Close navigation menu' : 'Open navigation menu'}
             aria-expanded={open}
-            aria-controls="mobile-navigation-drawer"
+            aria-controls="mobile-navigation-menu"
           >
             {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </button>
         </div>
       </nav>
 
-      {/* Mobile Drawer / Full Overlay */}
+      {/* Mobile Menu Panel — rendered below the top bar when open (< 768px) */}
       <AnimatePresence>
         {open && (
           <motion.div
-            id="mobile-navigation-drawer"
-            initial={{ opacity: 0, y: -10 }}
+            id="mobile-navigation-menu"
+            initial={{ opacity: 0, y: -8 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -10 }}
-            transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
-            className="fixed inset-x-0 top-[57px] sm:top-[65px] bottom-0 z-50 flex flex-col bg-background/98 backdrop-blur-3xl border-b border-white/10 shadow-2xl lg:hidden overflow-y-auto"
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.2, ease: 'easeOut' }}
+            className="flex-1 overflow-y-auto px-6 py-5 flex flex-col justify-between max-w-lg mx-auto w-full md:hidden"
           >
-            <div className="flex flex-col gap-1.5 p-5 sm:p-6 flex-1 justify-between max-w-md mx-auto w-full">
-              {/* Links list */}
-              <div className="flex flex-col gap-1">
-                <span className="text-[11px] font-mono uppercase tracking-widest text-muted/70 px-3 pb-2">
-                  Navigation
-                </span>
-                {navLinks.map((link) => (
-                  <a
-                    key={link.id}
-                    href={link.href}
-                    onClick={() => handleNavClick(link.id)}
-                    className={`flex items-center justify-between rounded-xl px-4 py-3 text-base font-medium transition-all ${
-                      active === link.id
-                        ? 'bg-primary/15 text-primary border border-primary/30 font-semibold shadow-sm'
-                        : 'text-muted hover:text-text hover:bg-white/5 active:bg-white/10'
-                    }`}
-                  >
-                    <span>{link.label}</span>
-                    {active === link.id && (
-                      <span className="h-2 w-2 rounded-full bg-primary" />
-                    )}
-                  </a>
-                ))}
-              </div>
-
-              {/* Bottom Actions */}
-              <div className="mt-4 pt-4 border-t border-white/10 flex flex-col gap-3">
+            {/* Navigation links list */}
+            <div className="flex flex-col gap-1.5">
+              <span className="text-[11px] font-mono uppercase tracking-widest text-muted/70 px-3 pb-1">
+                Navigation
+              </span>
+              {navLinks.map((link) => (
                 <a
-                  href={heroContent.resumeUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={() => setOpen(false)}
-                  className="flex items-center justify-center gap-2 rounded-xl border border-secondary/40 bg-secondary/15 px-4 py-3.5 text-sm font-semibold text-secondary hover:bg-secondary/25 transition-all shadow-[0_0_20px_rgba(0,229,255,0.15)]"
+                  key={link.id}
+                  href={link.href}
+                  onClick={() => handleNavClick(link.id)}
+                  className={`flex items-center justify-between rounded-xl px-4 py-3 text-base font-medium transition-all ${
+                    active === link.id
+                      ? 'bg-primary/15 text-primary border border-primary/30 font-semibold shadow-sm'
+                      : 'text-muted hover:text-text hover:bg-white/5 active:bg-white/10'
+                  }`}
                 >
-                  <Download className="h-4 w-4" />
-                  Download Resume
+                  <span>{link.label}</span>
+                  {active === link.id && (
+                    <span className="h-2 w-2 rounded-full bg-primary" />
+                  )}
                 </a>
-                <p className="text-center text-xs text-muted/60">
-                  © {new Date().getFullYear()} Kriti — Full-Stack Developer
-                </p>
-              </div>
+              ))}
+            </div>
+
+            {/* Resume button and footer inside menu */}
+            <div className="mt-6 pt-4 border-t border-white/10 flex flex-col gap-3.5">
+              <a
+                href={heroContent.resumeUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => setOpen(false)}
+                className="flex items-center justify-center gap-2 rounded-xl border border-secondary/40 bg-secondary/15 px-4 py-3.5 text-sm font-semibold text-secondary hover:bg-secondary/25 transition-all shadow-[0_0_20px_rgba(0,229,255,0.15)] active:scale-[0.99]"
+              >
+                <Download className="h-4 w-4" />
+                Download Resume
+              </a>
+              <p className="text-center text-xs text-muted/60">
+                © {new Date().getFullYear()} Kriti — Full-Stack Developer
+              </p>
             </div>
           </motion.div>
         )}
